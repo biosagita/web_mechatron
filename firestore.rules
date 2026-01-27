@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Registrations - allow read/write for now (test mode)
+    match /registrations/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // News
+    match /news/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Gallery
+    match /gallery/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Schedule
+    match /schedule/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
