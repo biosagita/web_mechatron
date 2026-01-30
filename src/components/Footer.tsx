@@ -6,7 +6,7 @@ import { Instagram, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-white to-gray-50 text-slate-900 py-12 border-t border-gray-200">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About */}
           <div>
@@ -17,7 +17,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div>
+          {/*<div>
             <h3 className="text-slate-900 font-bold mb-4">Menu</h3>
             <ul className="space-y-2 text-sm text-slate-600">
               <li><a href="#" className="hover:text-orange-500 transition">Beranda</a></li>
@@ -25,10 +25,10 @@ export default function Footer() {
               <li><a href="#" className="hover:text-orange-500 transition">Galeri</a></li>
               <li><a href="#" className="hover:text-orange-500 transition">Kontak</a></li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Contact */}
-          <div>
+          {/*<div>
             <h3 className="text-slate-900 font-bold mb-4">Kontak</h3>
             <ul className="space-y-3 text-sm text-slate-600">
               <li className="flex items-center space-x-2">
@@ -44,11 +44,11 @@ export default function Footer() {
                 <span>Jakarta, Indonesia</span>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Social */}
           <div>
-            <h3 className="text-slate-900 font-bold mb-4">Follow Us</h3>
+            <h3 className="text-slate-900 font-bold mb-4">Kontak</h3>
             <div className="flex space-x-4">
               <a href="https://www.instagram.com/mechatron_robotic" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 p-2 rounded-lg hover:shadow-lg transition text-white">
                 <Instagram size={20} />
@@ -59,6 +59,22 @@ export default function Footer() {
               <a href="mailto:mechatron.depok@gmail.com" className="bg-orange-100 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition text-orange-600">
                 <Mail size={20} />
               </a>
+            </div>
+          </div>
+
+          {/* Map */}
+          <div className="md:col-span-2">
+            <h3 className="text-slate-900 font-bold mb-4">Lokasi</h3>
+            <div className="rounded-lg overflow-hidden shadow-md border border-gray-200">
+              <iframe
+                width="100%"
+                height="200"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen={true}
+                referrerPolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.502881264353!2d106.82024894062205!3d-6.399022424902803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sMechatron%20Robotic%20School!2s-6.399022424902803%2C%20106.82024894062205!5e0!3m2!1sid!2sid!4v1704067200"
+              ></iframe>
             </div>
           </div>
         </div>

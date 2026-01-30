@@ -1,0 +1,173 @@
+'use client';
+
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useContent } from '@/context/ContentContext';
+import { Calendar, ArrowLeft, Share2 } from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { findNewsBySlug } from '@/lib/slugUtils';
+
+interface NewsDetailClientProps {
+  slug: string;
+}
+
+export function NewsDetailClient({ slug }: NewsDetailClientProps) {
+  const { news } = useContent();
+  const [currentNews, setCurrentNews] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (news && news.length > 0) {
+      console.log('=== DEBUG NEWS DETAIL ===');
+      console.log('All news items:', news.map(n => ({
+        title: n.title,
+        generatedSlug: n.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-')
+      })));
+      console.log('Looking for slug:', slug);
+      const found = findNewsBySlug(news, slug);
+      console.log('Found news:', found ? 'YES' : 'NO');
+      setCurrentNews(found);
+      setIsLoading(false);
+    }
+  }, [news, slug]);
+
+  if (isLoading) {
+    return (
+      <main className="bg-white">
+        <Navbar />
+        <div className="min-h-screen py-20 bg-gray-50 flex items-center justify-center">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  if (!currentNews) {
+    return (
+      <main className="bg-white">
+        <Navbar />
+        <div className="min-h-screen py-20 bg-gray-50">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl font-bold text-slate-900 mb-4">Berita Tidak Ditemukan</h1>
+            <p className="text-gray-600 mb-8">Berita yang Anda cari tidak tersedia.</p>
+            <Link href="/news">
+              <button className="px-8 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition">
+                Kembali ke Semua Berita
+              </button>
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  return (
+    <main className="bg-white">
+      <Navbar />
+      <article className="min-h-screen py-12 md:py-20 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Navigation */}
+          <div className="mb-8">
+            <Link href="/news" className="inline-flex items-center text-orange-600 font-semibold hover:text-orange-700 transition">
+              <ArrowLeft size={18} className="mr-2" />
+              Kembali ke Semua Berita
+            </Link>
+          </div>
+
+          {/* Featured Image */}
+          {currentNews.image && (
+            <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={currentNews.image} 
+                alt={currentNews.title}
+                className="w-full h-96 object-cover"
+              />
+            </div>
+          )}
+
+          {/* Article Header */}
+          <div className="mb-8 pb-8 border-b border-gray-200">
+            <div className="flex items-center space-x-3 mb-4 flex-wrap">
+              <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-semibold">
+                {currentNews.category}
+              </span>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Calendar size={16} className="text-cyan-500" />
+                <span>{currentNews.date}</span>
+              </div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+              {currentNews.title}
+            </h1>
+            <p className="text-xl text-gray-600">{currentNews.excerpt}</p>
+          </div>
+
+          {/* Article Content */}
+          <div className="prose prose-lg max-w-none mb-12">
+            <div 
+              dangerouslySetInnerHTML={{ __html: currentNews.content }}
+              className="leading-relaxed text-gray-700"
+            />
+          </div>
+
+          {/* Share Section */}
+          <div className="border-t border-b border-gray-200 py-8 mb-8">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Bagikan Berita Ini</h3>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  const url = `${window.location.origin}/news/${slug}`;
+                  navigator.share?.({ title: currentNews.title, url }) || navigator.clipboard.writeText(url);
+                }}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+              >
+                <Share2 size={18} />
+                Bagikan
+              </button>
+            </div>
+          </div>
+
+          {/* Related News */}
+          <div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-6">Berita Lainnya</h3>
+            <div className="space-y-4">
+              {news
+                .filter((item: any) => item.id !== currentNews.id)
+                .slice(0, 3)
+                .map((item: any) => {
+                  const itemSlug = item.title
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-');
+                  return (
+                    <Link key={item.id} href={`/news/${itemSlug}`}>
+                      <div className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer">
+                        <h4 className="font-semibold text-slate-900 hover:text-orange-600 transition">
+                          {item.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 mt-2">{item.date}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* Back Button */}
+          <div className="mt-12 text-center">
+            <Link href="/news">
+              <button className="px-8 py-3 border-2 border-orange-300 text-orange-600 font-semibold rounded-lg hover:border-orange-500 hover:bg-orange-50 transition">
+                Lihat Semua Berita
+              </button>
+            </Link>
+          </div>
+        </div>
+      </article>
+      <Footer />
+    </main>
+  );
+}

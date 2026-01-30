@@ -23,5 +23,23 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+    
+    // Courses
+    match /courses/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Testimonials
+    match /testimonials/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    // Settings (for partner banner, etc)
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }

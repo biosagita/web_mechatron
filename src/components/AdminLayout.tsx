@@ -9,10 +9,12 @@ import {
   LayoutDashboard, 
   FileText, 
   Image as ImageIcon, 
-  Calendar, 
+  BookOpen, 
   LogOut,
   ChevronDown,
-  UserCheck
+  UserCheck,
+  MessageSquare,
+  Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -52,9 +54,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       icon: <ImageIcon size={20} />,
     },
     {
-      label: 'Kelola Jadwal',
-      href: '/admin/schedule',
-      icon: <Calendar size={20} />,
+      label: 'Kelola Kursus',
+      href: '/admin/courses',
+      icon: <BookOpen size={20} />,
+    },
+    {
+      label: 'Kelola Testimoni',
+      href: '/admin/testimonials',
+      icon: <MessageSquare size={20} />,
+    },
+    {
+      label: 'Sekolah Mitra',
+      href: '/admin/partners',
+      icon: <Building2 size={20} />,
     },
   ];
 

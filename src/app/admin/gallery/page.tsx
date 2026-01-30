@@ -14,19 +14,8 @@ export default function GalleryAdmin() {
     id: '',
     title: '',
     category: '',
-    color: 'bg-blue-500',
+    image: '',
   });
-
-  const colors = [
-    'bg-blue-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-indigo-500',
-    'bg-teal-500',
-  ];
 
   const handleOpenForm = (item?: GalleryItem) => {
     if (item) {
@@ -37,14 +26,14 @@ export default function GalleryAdmin() {
         id: '',
         title: '',
         category: '',
-        color: 'bg-blue-500',
+        image: '',
       });
       setEditingId(null);
     }
     setIsFormOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title || !formData.category) {
@@ -52,27 +41,43 @@ export default function GalleryAdmin() {
       return;
     }
 
-    if (editingId) {
-      updateGallery(editingId, formData);
-    } else {
-      addGallery({
-        ...formData,
-        id: Date.now().toString(),
-      });
-    }
+    try {
+      if (editingId && editingId.length > 10) {
+        // Only update if ID looks like a Firestore ID (long string)
+        // Default IDs like '1', '2' etc should be treated as new
+        await updateGallery(editingId, formData);
+        alert('Proyek berhasil diupdate!');
+      } else {
+        // Add as new item
+        await addGallery({
+          ...formData,
+          id: Date.now().toString(),
+        });
+        alert('Proyek berhasil ditambahkan!');
+      }
 
-    setIsFormOpen(false);
-    setFormData({
-      id: '',
-      title: '',
-      category: '',
-      color: 'bg-blue-500',
-    });
+      setIsFormOpen(false);
+      setFormData({
+        id: '',
+        title: '',
+        category: '',
+        image: '',
+      });
+    } catch (error) {
+      console.error('Error saving gallery item:', error);
+      alert('Gagal menyimpan proyek!');
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus proyek ini?')) {
-      deleteGallery(id);
+      try {
+        await deleteGallery(id);
+        alert('Proyek berhasil dihapus!');
+      } catch (error) {
+        console.error('Error deleting gallery item:', error);
+        alert('Gagal menghapus proyek!');
+      }
     }
   };
 
@@ -132,22 +137,26 @@ export default function GalleryAdmin() {
 
                 <div>
                   <label className="block text-slate-900 text-sm font-semibold mb-2">
-                    Warna
+                    URL Gambar
                   </label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {colors.map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, color })}
-                        className={`h-10 rounded-lg border-2 transition ${
-                          formData.color === color
-                            ? 'border-white'
-                            : 'border-transparent'
-                        } ${color}`}
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="w-full px-4 py-2 bg-gray-50 text-slate-900 rounded-lg border border-gray-300 focus:border-cyan-500 outline-none transition"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  {formData.image && (
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-slate-600 mb-2">Preview Gambar:</p>
+                      <img 
+                        src={formData.image} 
+                        alt="Preview" 
+                        className="w-full h-40 object-cover rounded-lg"
+                        onError={() => console.log('Image failed to load')}
                       />
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -175,12 +184,27 @@ export default function GalleryAdmin() {
           {gallery.map((item) => (
             <div
               key={item.id}
-              className={`${item.color} h-64 rounded-lg shadow-lg overflow-hidden group relative`}
+              className="h-64 rounded-lg shadow-lg overflow-hidden group relative"
             >
-              <div className="w-full h-full flex flex-col justify-between p-6 text-white">
+              {/* Background Image */}
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-500"></div>
+              )}
+              
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/40"></div>
+              
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col justify-between p-6 text-white">
                 <div>
-                  <p className="text-sm font-semibold opacity-90 mb-2">{item.category}</p>
-                  <h3 className="text-2xl font-bold">{item.title}</h3>
+                  <p className="text-sm font-semibold opacity-90 mb-2 drop-shadow">{item.category}</p>
+                  <h3 className="text-2xl font-bold drop-shadow">{item.title}</h3>
                 </div>
 
                 {/* Action Buttons on Hover */}
