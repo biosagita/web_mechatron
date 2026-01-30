@@ -35,6 +35,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+
+    // Custom Pages
+    match /pages/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
     
     // Settings (for partner banner, etc)
     match /settings/{document=**} {
