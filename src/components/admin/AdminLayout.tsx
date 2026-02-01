@@ -14,7 +14,8 @@ import {
   ChevronDown,
   UserCheck,
   MessageSquare,
-  Building2
+  Building2,
+  Layers
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -57,6 +58,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       label: 'Kelola Kursus',
       href: '/admin/courses',
       icon: <BookOpen size={20} />,
+    },
+    {
+      label: 'Page Builder',
+      href: '/admin/pages',
+      icon: <Layers size={20} />,
     },
     {
       label: 'Kelola Testimoni',

@@ -1,7 +1,7 @@
 'use client';
 
 import { useContent } from '@/context/ContentContext';
-import PageRenderer from '@/components/PageRenderer';
+import PageRenderer from './PageRenderer';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -10,7 +10,7 @@ interface CourseDetailClientProps {
 }
 
 export default function CourseDetailClient({ courseId }: CourseDetailClientProps) {
-  const { courses, getPageByCourseId } = useContent();
+  const { courses, getPageBySlug } = useContent();
   const [course, setCourse] = useState<any>(null);
   const [customPage, setCustomPage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -20,12 +20,16 @@ export default function CourseDetailClient({ courseId }: CourseDetailClientProps
     setCourse(foundCourse);
 
     if (foundCourse) {
-      const page = getPageByCourseId(courseId);
+      // Check both courseId link and pageSlug
+      let page = null;
+      if (foundCourse.pageSlug) {
+        page = getPageBySlug(foundCourse.pageSlug);
+      }
       setCustomPage(page);
     }
 
     setLoading(false);
-  }, [courseId, courses, getPageByCourseId]);
+  }, [courseId, courses, getPageBySlug]);
 
   if (loading) {
     return (

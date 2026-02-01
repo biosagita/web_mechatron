@@ -3,9 +3,24 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === '/') {
+      // Jika sudah di home, scroll ke top
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Jika di halaman lain, navigate ke home
+      e.preventDefault();
+      router.push('/');
+    }
+  };
 
   return (
     <nav className="bg-white text-slate-900 sticky top-0 z-50 shadow-lg border-b border-gray-200">
@@ -19,7 +34,7 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
-            <Link href="#home" className="hover:text-orange-500 transition font-medium">
+            <Link href="/" onClick={handleBerandaClick} className="hover:text-orange-500 transition font-medium">
               Beranda
             </Link>
             <Link href="#features" className="hover:text-orange-500 transition font-medium">
@@ -52,7 +67,7 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-4 space-y-3 border-t border-gray-200">
-            <Link href="#home" className="block hover:text-orange-500 transition py-2 font-medium">
+            <Link href="/" onClick={handleBerandaClick} className="block hover:text-orange-500 transition py-2 font-medium">
               Beranda
             </Link>
             <Link href="#features" className="block hover:text-orange-500 transition py-2 font-medium">

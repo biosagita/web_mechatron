@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
-import { NewsItem } from '@/context/ContentContext';
+import { NewsItem, useContent } from '@/context/ContentContext';
 import { addDoc, updateDoc, collection, doc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -15,11 +15,13 @@ interface NewsEditorProps {
 }
 
 export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorProps) {
+  const { pages } = useContent();
   const [title, setTitle] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
+  const [pageSlug, setPageSlug] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Update form when editingNews changes
@@ -30,6 +32,7 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
       setCategory(editingNews.category || '');
       setContent(editingNews.content || '');
       setImage(editingNews.image || '');
+      setPageSlug(editingNews.pageSlug || '');
     } else {
       // Reset form when creating new news
       setTitle('');
@@ -37,6 +40,7 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
       setCategory('');
       setContent('');
       setImage('');
+      setPageSlug('');
     }
   }, [editingNews, isOpen]);
 
@@ -59,6 +63,7 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
         category,
         content,
         image,
+        pageSlug: pageSlug || undefined,
         date: new Date().toLocaleDateString('id-ID'),
         updatedAt: Timestamp.now(),
       };
@@ -89,6 +94,7 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
       setCategory('');
       setContent('');
       setImage('');
+      setPageSlug('');
       onClose();
     } catch (error: any) {
       console.error('Error saving news:', error);
@@ -196,6 +202,28 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
               disabled={isLoading}
             />
           </div>
+
+          {/* Custom Page */}
+          {pages && pages.length > 0 && (
+            <div>
+              <label className="block text-sm font-semibold text-slate-900 mb-2">
+                Custom Page (Opsional)
+              </label>
+              <select
+                value={pageSlug}
+                onChange={(e) => setPageSlug(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-slate-900"
+                disabled={isLoading}
+              >
+                <option value="">-- Pilih Custom Page --</option>
+                {pages.map((page) => (
+                  <option key={page.slug} value={page.slug}>
+                    {page.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Rich Text Content */}
           <div>

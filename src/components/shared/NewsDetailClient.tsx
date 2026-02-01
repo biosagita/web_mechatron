@@ -1,36 +1,39 @@
 'use client';
 
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { Navbar, Footer } from '@/components/landing';
 import { useContent } from '@/context/ContentContext';
 import { Calendar, ArrowLeft, Share2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { findNewsBySlug } from '@/lib/slugUtils';
+import { findNewsBySlug } from '@/utils';
+import PageRenderer from './PageRenderer';
 
 interface NewsDetailClientProps {
   slug: string;
 }
 
 export function NewsDetailClient({ slug }: NewsDetailClientProps) {
-  const { news } = useContent();
+  const { news, getPageBySlug } = useContent();
+  const router = useRouter();
   const [currentNews, setCurrentNews] = useState<any>(null);
+  const [customPage, setCustomPage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (news && news.length > 0) {
-      console.log('=== DEBUG NEWS DETAIL ===');
-      console.log('All news items:', news.map(n => ({
-        title: n.title,
-        generatedSlug: n.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-')
-      })));
-      console.log('Looking for slug:', slug);
       const found = findNewsBySlug(news, slug);
-      console.log('Found news:', found ? 'YES' : 'NO');
       setCurrentNews(found);
+
+      // Check if news has custom page
+      if (found && found.pageSlug) {
+        const page = getPageBySlug(found.pageSlug);
+        setCustomPage(page);
+      }
+
       setIsLoading(false);
     }
-  }, [news, slug]);
+  }, [news, slug, getPageBySlug]);
 
   if (isLoading) {
     return (
@@ -64,7 +67,16 @@ export function NewsDetailClient({ slug }: NewsDetailClientProps) {
     );
   }
 
-  return (
+  // If custom page exists, render it instead
+  if (customPage && customPage.sections?.length > 0) {
+    return (
+      <>
+        <Navbar />
+        <PageRenderer sections={customPage.sections} />
+        <Footer />
+      </>
+    );
+  }  return (
     <main className="bg-white">
       <Navbar />
       <article className="min-h-screen py-12 md:py-20 bg-white">
