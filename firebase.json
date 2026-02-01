@@ -1,14 +1,29 @@
 {
   "hosting": {
-    "source": ".",
+    "public": "out",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "frameworksBackend": {
-      "region": "asia-southeast1"
-    }
+    "rewrites": [
+      {
+        "source": "/courses/**",
+        "destination": "/courses/placeholder/index.html"
+      },
+      {
+        "source": "/news/**",
+        "destination": "/news/placeholder/index.html"
+      },
+      {
+        "source": "/pages/**",
+        "destination": "/pages/placeholder/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   },
   "firestore": {
     "rules": "firestore.rules",
