@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🤖 Mechatron - Website Kursus Robotik
 
-## Getting Started
+Website modern untuk kursus robotik dengan sistem CMS admin lengkap.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Firebase](https://img.shields.io/badge/Firebase-10-orange)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-cyan)
+
+## ✨ Features
+
+- **Landing Page** - Hero, Features, Courses, Gallery, Testimonials
+- **Page Builder** - 15 jenis section untuk halaman custom
+- **Admin Dashboard** - CRUD untuk semua konten
+- **Authentication** - Login admin dengan Firebase
+- **File Upload** - Upload gambar ke Firebase Storage
+- **Rich Text Editor** - TipTap editor untuk konten
+
+## 🚀 Quick Start
 
 ```bash
+# Clone repository
+git clone https://github.com/your-repo/mechatron.git
+cd mechatron
+
+# Install dependencies
+npm install
+
+# Setup environment
+cp .env.example .env.local
+# Edit .env.local dengan Firebase credentials
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/              # Next.js App Router
+│   ├── admin/        # Admin dashboard pages
+│   ├── news/         # News pages
+│   └── [slug]/       # Dynamic pages
+├── components/
+│   ├── landing/      # Public website components
+│   ├── admin/        # Admin-only components
+│   └── shared/       # Shared components
+├── context/          # React Context providers
+├── hooks/            # Custom React hooks
+├── types/            # TypeScript interfaces
+├── utils/            # Utility functions
+└── lib/              # Firebase config
+```
 
-## Learn More
+## 📖 Documentation
 
-To learn more about Next.js, take a look at the following resources:
+Dokumentasi lengkap ada di folder [`docs/`](./docs/):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Doc | Deskripsi |
+|-----|-----------|
+| [Quick Start](./docs/01-quick-start.md) | Setup awal project |
+| [Architecture](./docs/02-architecture.md) | Struktur & arsitektur |
+| [Components](./docs/03-components.md) | Daftar komponen |
+| [Page Builder](./docs/04-page-builder.md) | Panduan page builder |
+| [Firebase](./docs/05-firebase.md) | Konfigurasi Firebase |
+| [Deployment](./docs/06-deployment.md) | Panduan deploy |
+| [API Reference](./docs/07-api-reference.md) | Types, hooks, utils |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Tech Stack
 
-## Deploy on Vercel
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Database**: Firebase Firestore
+- **Storage**: Firebase Storage
+- **Auth**: Firebase Authentication
+- **Styling**: Tailwind CSS
+- **Editor**: TipTap
+- **Icons**: Lucide React
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔐 Admin Access
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+URL: /admin/login
+Default: Setup via Firebase Console
+```
+
+## 📝 License
+
+MIT License - Feel free to use for your own projects.

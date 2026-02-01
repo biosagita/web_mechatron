@@ -1,12 +1,12 @@
 'use client';
 
-import AdminLayout from '@/components/AdminLayout';
+import { AdminLayout } from '@/components/admin';
 import { useContent, CourseItem } from '@/context/ContentContext';
 import { useState } from 'react';
 import { Trash2, Edit2, Plus } from 'lucide-react';
 
 export default function AdminCourses() {
-  const { courses, addCourse, updateCourse, deleteCourse } = useContent();
+  const { courses, pages, addCourse, updateCourse, deleteCourse } = useContent();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<CourseItem, 'id'>>({
@@ -15,7 +15,7 @@ export default function AdminCourses() {
     ageGroup: '',
     tools: '',
     details: '',
-
+    pageSlug: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,7 @@ export default function AdminCourses() {
       ageGroup: '',
       tools: '',
       details: '',
-     
+      pageSlug: '',
     });
     setIsFormVisible(true);
   };
@@ -45,7 +45,7 @@ export default function AdminCourses() {
       ageGroup: course.ageGroup,
       tools: course.tools,
       details: course.details,
-  
+      pageSlug: course.pageSlug || '',
     });
     setIsFormVisible(true);
   };
@@ -77,7 +77,7 @@ export default function AdminCourses() {
         ageGroup: '',
         tools: '',
         details: '',
-    
+        pageSlug: '',
       });
     } catch (error) {
       console.error('Error saving course:', error);
@@ -184,7 +184,24 @@ export default function AdminCourses() {
                 />
               </div>
 
-
+              {/* Custom Page Selection */}
+              {pages && pages.length > 0 && (
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Custom Page (Opsional)</label>
+                  <select
+                    value={formData.pageSlug || ''}
+                    onChange={(e) => setFormData({ ...formData, pageSlug: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-slate-900 bg-white"
+                  >
+                    <option value="">-- Pilih Custom Page --</option>
+                    {pages.map((page) => (
+                      <option key={page.slug} value={page.slug}>
+                        {page.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="flex gap-2">
                 <button
                   type="submit"

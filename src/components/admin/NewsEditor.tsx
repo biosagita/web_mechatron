@@ -82,7 +82,6 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
         });
         onSave({
           id: newsRef.id,
-          date: newsData.date,
           ...newsData,
         });
         alert('Berita berhasil ditambahkan!');

@@ -1,4 +1,4 @@
-import { NewsDetailClient } from '@/components/NewsDetailClient';
+import { NewsDetailClient } from '@/components/shared';
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

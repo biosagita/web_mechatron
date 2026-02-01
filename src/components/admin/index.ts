@@ -5,6 +5,6 @@
  */
 
 export { default as AdminLayout } from './AdminLayout';
-export { default as NewsEditor } from './NewsEditor';
-export { default as FileUpload } from './FileUpload';
-export { default as RichTextEditor } from './RichTextEditor';
+export { NewsEditor } from './NewsEditor';
+export { FileUpload } from './FileUpload';
+export { RichTextEditor } from './RichTextEditor';

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import CourseDetailClient from '@/components/CourseDetailClient';
+import { CourseDetailClient } from '@/components/shared';
 
 interface Props {
   params: Promise<{ id: string }>;

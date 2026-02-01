@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminLayout } from '@/components/admin';
+import { ProtectedRoute } from '@/components/shared';
 import { useContent } from '@/context/ContentContext';
 import { Image as ImageIcon, Save } from 'lucide-react';
 

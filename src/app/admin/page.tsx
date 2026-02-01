@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminLayout } from '@/components/admin';
+import { ProtectedRoute } from '@/components/shared';
 import { useContent } from '@/context/ContentContext';
 import { FileText, Image, Calendar, TrendingUp } from 'lucide-react';
 

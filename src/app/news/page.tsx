@@ -1,12 +1,11 @@
 'use client';
 
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { Navbar, Footer } from '@/components/landing';
 import { useContent } from '@/context/ContentContext';
 import { Calendar, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { generateSlug } from '@/lib/slugUtils';
+import { generateSlug } from '@/utils';
 
 const ITEMS_PER_PAGE = 10;
 

@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminLayout, NewsEditor } from '@/components/admin';
+import { ProtectedRoute } from '@/components/shared';
 import { useContent, NewsItem } from '@/context/ContentContext';
-import { NewsEditor } from '@/components/NewsEditor';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -83,6 +82,9 @@ export default function NewsAdmin() {
                     <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
                       Kategori
                     </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Custom Page
+                    </th>
                     <th className="px-6 py-3 text-center text-sm font-semibold text-slate-900">
                       Aksi
                     </th>
@@ -102,6 +104,15 @@ export default function NewsAdmin() {
                         <span className="px-3 py-1 bg-cyan-100 text-cyan-700 text-xs rounded-full font-semibold">
                           {item.category}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {item.pageSlug ? (
+                          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-semibold">
+                            {item.pageSlug}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center space-x-3">

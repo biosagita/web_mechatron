@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminLayout } from '@/components/admin';
+import { ProtectedRoute } from '@/components/shared';
 import { useContent, GalleryItem } from '@/context/ContentContext';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 

@@ -1,0 +1,194 @@
+[debug] [2026-02-01T04:54:07.953Z] ----------------------------------------------------------------------
+[debug] [2026-02-01T04:54:07.962Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\biosa\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-02-01T04:54:07.963Z] CLI Version:   15.4.0
+[debug] [2026-02-01T04:54:07.963Z] Platform:      win32
+[debug] [2026-02-01T04:54:07.963Z] Node Version:  v24.13.0
+[debug] [2026-02-01T04:54:07.963Z] Time:          Sun Feb 01 2026 11:54:07 GMT+0700 (Western Indonesia Time)
+[debug] [2026-02-01T04:54:07.963Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-01T04:54:07.965Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-02-01T04:54:11.978Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-01T04:54:11.978Z] > authorizing via signed-in user (mechatron.depok@gmail.com)
+[debug] [2026-02-01T04:54:11.978Z] [iam] checking project web-mechatron for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-02-01T04:54:11.979Z] Checked if tokens are valid: false, expires at: 1769758076336
+[debug] [2026-02-01T04:54:11.979Z] Checked if tokens are valid: false, expires at: 1769758076336
+[debug] [2026-02-01T04:54:11.979Z] > refreshing access token with scopes: []
+[debug] [2026-02-01T04:54:11.981Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-01T04:54:11.981Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-01T04:54:12.099Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-01T04:54:12.099Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-01T04:54:12.113Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/web-mechatron:testIamPermissions [none]
+[debug] [2026-02-01T04:54:12.113Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/web-mechatron:testIamPermissions x-goog-quota-user=projects/web-mechatron
+[debug] [2026-02-01T04:54:12.113Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/web-mechatron:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-02-01T04:54:12.439Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-02-01T04:54:12.439Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-02-01T04:54:13.313Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/web-mechatron:testIamPermissions 200
+[debug] [2026-02-01T04:54:13.313Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/web-mechatron:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-02-01T04:54:13.313Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:13.313Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:13.314Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron [none]
+[debug] [2026-02-01T04:54:13.862Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron 200
+[debug] [2026-02-01T04:54:13.862Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron {"projectId":"web-mechatron","projectNumber":"677910953985","displayName":"web-mechatron","name":"projects/web-mechatron","resources":{"hostingSite":"web-mechatron"},"state":"ACTIVE","etag":"1_114fb97d-ebf0-42f3-96c9-17bbd2c4bde6"}
+[debug] [2026-02-01T04:54:17.734Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:17.734Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:17.734Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites pageToken=&pageSize=10
+[debug] [2026-02-01T04:54:19.182Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites 200
+[debug] [2026-02-01T04:54:19.182Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites {"sites":[{"name":"projects/web-mechatron/sites/web-mechatron","defaultUrl":"https://web-mechatron.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2026-02-01T04:54:19.183Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:19.183Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:19.183Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites 
+[debug] [2026-02-01T04:54:19.551Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites 200
+[debug] [2026-02-01T04:54:19.551Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites {"sites":[{"name":"projects/web-mechatron/sites/web-mechatron","defaultUrl":"https://web-mechatron.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2026-02-01T04:54:19.551Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:19.551Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:19.552Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron/webApps/-/config [none]
+[debug] [2026-02-01T04:54:20.406Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron/webApps/-/config 200
+[debug] [2026-02-01T04:54:20.406Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/web-mechatron/webApps/-/config {"projectId":"web-mechatron","appId":"1:677910953985:web:3ee43ce5e556aea192c000","storageBucket":"web-mechatron.firebasestorage.app","apiKey":"AIzaSyAgLnPKhVns9pLznp0scnG8UayCmDtj7gY","authDomain":"web-mechatron.firebaseapp.com","messagingSenderId":"677910953985","projectNumber":"677910953985","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-02-01T04:54:27.937Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:27.937Z] Checked if tokens are valid: true, expires at: 1769925251099
+[debug] [2026-02-01T04:54:27.937Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites/web-mechatron [none]
+[debug] [2026-02-01T04:54:29.344Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites/web-mechatron 200
+[debug] [2026-02-01T04:54:29.344Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/web-mechatron/sites/web-mechatron {"name":"projects/web-mechatron/sites/web-mechatron","defaultUrl":"https://web-mechatron.web.app","type":"DEFAULT_SITE"}
+[info] ▲ Next.js 16.1.4 (Turbopack)
+
+[info] - Environments: .env.local
+
+
+[info]   Creating an optimized production build ...
+
+[info] 
+
+[info] > Build error occurred
+
+[info] Error: Turbopack build failed with 4 errors:
+./src/components/admin/index.ts:8:1
+Export default doesn't exist in target module
+   6 |
+   7 | export { default as AdminLayout } from './AdminLayout';
+>  8 | export { default as NewsEditor } from './NewsEditor';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | export { default as FileUpload } from './FileUpload';
+  10 | export { default as RichTextEditor } from './RichTextEditor';
+  11 |
+
+The export default was not found in module [project]/src/components/admin/NewsEditor.tsx [app-client] (ecmascript).
+Did you mean to import NewsEditor?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/admin/index.ts [Client Component Browser]
+    ./src/app/admin/page.tsx [Client Component Browser]
+    ./src/app/admin/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/admin/index.ts [Client Component SSR]
+    ./src/app/admin/page.tsx [Client Component SSR]
+    ./src/app/admin/page.tsx [Server Component]
+
+
+./src/components/admin/index.ts:8:1
+Export default doesn't exist in target module
+   6 |
+   7 | export { default as AdminLayout } from './AdminLayout';
+>  8 | export { default as NewsEditor } from './NewsEditor';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | export { default as FileUpload } from './FileUpload';
+  10 | export { default as RichTextEditor } from './RichTextEditor';
+  11 |
+
+The export default was not found in module [project]/src/components/admin/NewsEditor.tsx [app-ssr] (ecmascript).
+Did you mean to import NewsEditor?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/admin/index.ts [Client Component Browser]
+    ./src/app/admin/page.tsx [Client Component Browser]
+    ./src/app/admin/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/admin/index.ts [Client Component SSR]
+    ./src/app/admin/page.tsx [Client Component SSR]
+    ./src/app/admin/page.tsx [Server Component]
+
+
+./src/components/shared/index.ts:7:1
+Export default doesn't exist in target module
+   5 |  */
+   6 |
+>  7 | export { default as ProtectedRoute } from './ProtectedRoute';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | export { default as PageRenderer } from './PageRenderer';
+   9 | export { default as PageDetailClient } from './PageDetailClient';
+  10 | export { default as NewsDetailClient } from './NewsDetailClient';
+
+The export default was not found in module [project]/src/components/shared/ProtectedRoute.tsx [app-client] (ecmascript).
+Did you mean to import ProtectedRoute?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Server Component:
+    ./src/components/shared/index.ts
+    ./src/app/courses/[id]/page.tsx
+
+  Client Component Browser:
+    ./src/components/shared/index.ts [Client Component Browser]
+    ./src/app/admin/page.tsx [Client Component Browser]
+    ./src/app/admin/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/shared/index.ts [Client Component SSR]
+    ./src/app/admin/page.tsx [Client Component SSR]
+    ./src/app/admin/page.tsx [Server Component]
+
+
+./src/components/shared/index.ts:7:1
+Export default doesn't exist in target module
+   5 |  */
+   6 |
+>  7 | export { default as ProtectedRoute } from './ProtectedRoute';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | export { default as PageRenderer } from './PageRenderer';
+   9 | export { default as PageDetailClient } from './PageDetailClient';
+  10 | export { default as NewsDetailClient } from './NewsDetailClient';
+
+The export default was not found in module [project]/src/components/shared/ProtectedRoute.tsx [app-ssr] (ecmascript).
+Did you mean to import ProtectedRoute?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Server Component:
+    ./src/components/shared/index.ts
+    ./src/app/courses/[id]/page.tsx
+
+  Client Component Browser:
+    ./src/components/shared/index.ts [Client Component Browser]
+    ./src/app/admin/page.tsx [Client Component Browser]
+    ./src/app/admin/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/shared/index.ts [Client Component SSR]
+    ./src/app/admin/page.tsx [Client Component SSR]
+    ./src/app/admin/page.tsx [Server Component]
+
+
+    at <unknown> (./src/components/admin/index.ts:8:1)
+    at <unknown> (./src/components/admin/index.ts:8:1)
+    at <unknown> (./src/components/shared/index.ts:7:1)
+    at <unknown> (./src/components/shared/index.ts:7:1)
+
+[debug] [2026-02-01T04:54:38.901Z] Error: ENOENT: no such file or directory, open 'C:\wamp64\www\mechatron\.next\server\middleware-manifest.json'
+[error] 
+[error] Error: An unexpected error has occurred.

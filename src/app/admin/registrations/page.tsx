@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useContent, RegistrationItem } from '@/context/ContentContext';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ProtectedRoute } from '@/components/shared';
 
 export default function RegistrationsPage() {
   const { registrations, updateRegistration, deleteRegistration } = useContent();

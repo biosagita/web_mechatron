@@ -24,6 +24,7 @@ export interface NewsItem {
   category: string;
   content: string;
   image?: string;
+  pageSlug?: string;
   createdAt?: any;
   updatedAt?: any;
 }
@@ -75,26 +76,76 @@ export interface CourseItem {
   details: string;
   image?: string;
   pageId?: string;
+  pageSlug?: string;
 }
 
 // Page Builder Types
 export interface PageSection {
   id: string;
-  type: 'hero' | 'features' | 'cta' | 'gallery' | 'text' | 'image';
+  type: 'hero' | 'features' | 'cta' | 'gallery' | 'text' | 'image' | 'text-image' | 'image-grid' | 'stats' | 'testimonial' | 'two-column' | 'cards' | 'video' | 'divider' | 'spacer';
   order: number;
   data: {
+    // Common
     title?: string;
     subtitle?: string;
     description?: string;
     image?: string;
+    content?: string;
+    
+    // Buttons
     buttonText?: string;
     buttonLink?: string;
-    content?: string;
+    buttonText2?: string;
+    buttonLink2?: string;
+    
+    // Hero / CTA
+    badge?: string;
+    backgroundImage?: string;
+    
+    // Text-Image
+    imagePosition?: 'left' | 'right';
+    
+    // Image Grid
+    images?: string[];
+    columns?: number;
+    
+    // Stats / Features / Cards
     items?: Array<{
-      title: string;
+      title?: string;
       description?: string;
       icon?: string;
-    }>;
+      number?: string;
+      label?: string;
+      image?: string;
+      link?: string;
+    }> | string[];
+    
+    // Testimonial
+    quote?: string;
+    author?: string;
+    role?: string;
+    avatar?: string;
+    
+    // Two Column
+    leftTitle?: string;
+    leftContent?: string;
+    leftImages?: string[];
+    rightTitle?: string;
+    rightContent?: string;
+    rightImages?: string[];
+    
+    // Video
+    url?: string;
+    
+    // Image
+    caption?: string;
+    
+    // Divider
+    style?: 'normal' | 'thick';
+    color?: string;
+    
+    // Spacer
+    height?: number;
   };
 }
 
@@ -221,6 +272,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           category: docData.category || '',
           content: docData.content || '',
           image: docData.image || '',
+          pageSlug: docData.pageSlug || undefined,
           createdAt: docData.createdAt,
           updatedAt: docData.updatedAt,
         });
