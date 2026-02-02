@@ -151,7 +151,6 @@ export interface PageSection {
 
 export interface CustomPage {
   id: string;
-  courseId?: string;
   title: string;
   slug: string;
   sections: PageSection[];
@@ -202,11 +201,13 @@ interface ContentContextType {
   updatePage: (id: string, item: Omit<CustomPage, 'id'>) => Promise<void>;
   deletePage: (id: string) => Promise<void>;
   getPageBySlug: (slug: string) => CustomPage | undefined;
-  getPageByCourseId: (courseId: string) => CustomPage | undefined;
 
   // Partner Banner
   partnerBanner: string;
   updatePartnerBanner: (url: string) => void;
+
+  // Loading state
+  loading: boolean;
 }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
@@ -805,10 +806,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     return pages.find((p) => p.slug === slug);
   };
 
-  const getPageByCourseId = (courseId: string): CustomPage | undefined => {
-    return pages.find((p) => p.courseId === courseId);
-  };
-
   return (
     <ContentContext.Provider
       value={{
@@ -841,9 +838,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         updatePage,
         deletePage,
         getPageBySlug,
-        getPageByCourseId,
         partnerBanner,
         updatePartnerBanner,
+        loading,
       }}
     >
       {children}

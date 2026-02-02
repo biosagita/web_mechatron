@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
+import ImageUpload from './ImageUpload';
 import { NewsItem, useContent } from '@/context/ContentContext';
 import { addDoc, updateDoc, collection, doc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -189,16 +190,11 @@ export function NewsEditor({ isOpen, onClose, onSave, editingNews }: NewsEditorP
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
-              URL Gambar (Opsional)
-            </label>
-            <input
-              type="url"
+            <ImageUpload
               value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-slate-900"
-              disabled={isLoading}
+              onChange={setImage}
+              folder="news"
+              label="Gambar Berita (Opsional)"
             />
           </div>
 

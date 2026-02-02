@@ -9,29 +9,67 @@ interface CourseDetailClientProps {
   courseId: string;
 }
 
-export default function CourseDetailClient({ courseId }: CourseDetailClientProps) {
-  const { courses, getPageBySlug } = useContent();
+export default function CourseDetailClient({ courseId: propCourseId }: CourseDetailClientProps) {
+  const { courses, pages, getPageBySlug, loading: contextLoading } = useContent();
   const [course, setCourse] = useState<any>(null);
   const [customPage, setCustomPage] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [actualCourseId, setActualCourseId] = useState<string>(propCourseId);
+
+  // Get actual courseId from URL on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathParts = window.location.pathname.split('/');
+      const idFromUrl = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+      if (idFromUrl && idFromUrl !== 'placeholder') {
+        setActualCourseId(idFromUrl);
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    const foundCourse = courses.find((c) => c.id === courseId);
+    // Wait for context to finish loading and actual courseId to be set
+    if (contextLoading) return;
+    if (actualCourseId === 'placeholder') return;
+
+    console.log('[CourseDetail] Context loaded. Looking for course:', actualCourseId);
+    console.log('[CourseDetail] Available courses:', courses.map(c => ({ id: c.id, title: c.title, pageSlug: c.pageSlug })));
+    console.log('[CourseDetail] Available pages:', pages.map(p => ({ id: p.id, slug: p.slug, title: p.title, courseId: (p as any).courseId })));
+
+    const foundCourse = courses.find((c) => c.id === actualCourseId);
     setCourse(foundCourse);
+    console.log('[CourseDetail] Found course:', foundCourse);
 
     if (foundCourse) {
-      // Check both courseId link and pageSlug
+      // Check multiple ways to find the page
       let page = null;
+      
+      // 1. Try by pageSlug on course
       if (foundCourse.pageSlug) {
+        console.log('[CourseDetail] Looking for page with slug:', foundCourse.pageSlug);
         page = getPageBySlug(foundCourse.pageSlug);
+        console.log('[CourseDetail] Found page by slug:', page);
       }
+      
+      // 2. Try by pageId on course
+      if (!page && foundCourse.pageId) {
+        console.log('[CourseDetail] Looking for page with id:', foundCourse.pageId);
+        page = pages.find(p => p.id === foundCourse.pageId);
+        console.log('[CourseDetail] Found page by id:', page);
+      }
+
+      // 3. Backward compatibility: Try finding page with courseId matching this course
+      if (!page) {
+        console.log('[CourseDetail] Looking for page with courseId:', actualCourseId);
+        page = pages.find(p => (p as any).courseId === actualCourseId);
+        console.log('[CourseDetail] Found page by courseId (legacy):', page);
+      }
+      
+      console.log('[CourseDetail] Final page for course:', actualCourseId, page);
       setCustomPage(page);
     }
+  }, [actualCourseId, courses, pages, getPageBySlug, contextLoading]);
 
-    setLoading(false);
-  }, [courseId, courses, getPageBySlug]);
-
-  if (loading) {
+  if (contextLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>

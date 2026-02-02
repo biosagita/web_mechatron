@@ -8,20 +8,28 @@
     ],
     "rewrites": [
       {
-        "source": "/courses/**",
+        "source": "/courses/placeholder{,/**}",
         "destination": "/courses/placeholder/index.html"
       },
       {
-        "source": "/news/**",
+        "source": "/courses/*",
+        "destination": "/courses/placeholder/index.html"
+      },
+      {
+        "source": "/news/placeholder{,/**}",
         "destination": "/news/placeholder/index.html"
       },
       {
-        "source": "/pages/**",
+        "source": "/news/*",
+        "destination": "/news/placeholder/index.html"
+      },
+      {
+        "source": "/pages/placeholder{,/**}",
         "destination": "/pages/placeholder/index.html"
       },
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/pages/*",
+        "destination": "/pages/placeholder/index.html"
       }
     ]
   },

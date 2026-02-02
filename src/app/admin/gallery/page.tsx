@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AdminLayout } from '@/components/admin';
+import { AdminLayout, ImageUpload } from '@/components/admin';
 import { ProtectedRoute } from '@/components/shared';
 import { useContent, GalleryItem } from '@/context/ContentContext';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
@@ -136,27 +136,12 @@ export default function GalleryAdmin() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-900 text-sm font-semibold mb-2">
-                    URL Gambar
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-50 text-slate-900 rounded-lg border border-gray-300 focus:border-cyan-500 outline-none transition"
-                    placeholder="https://example.com/image.jpg"
+                  <ImageUpload
+                    value={formData.image || ''}
+                    onChange={(url) => setFormData({ ...formData, image: url })}
+                    folder="gallery"
+                    label="Gambar Proyek"
                   />
-                  {formData.image && (
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-slate-600 mb-2">Preview Gambar:</p>
-                      <img 
-                        src={formData.image} 
-                        alt="Preview" 
-                        className="w-full h-40 object-cover rounded-lg"
-                        onError={() => console.log('Image failed to load')}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 <div className="flex gap-3 pt-4">

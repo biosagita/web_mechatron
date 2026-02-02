@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useContent } from '@/context/ContentContext';
 import { CustomPage, PageSection, CourseItem } from '@/context/ContentContext';
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { ImageUpload, MultiImageUpload } from '@/components/admin';
 
 const SECTION_TYPES = [
   { value: 'hero', label: '🎯 Hero Section', description: 'Banner utama dengan judul, subtitle, dan tombol' },
@@ -24,16 +25,14 @@ const SECTION_TYPES = [
 ] as const;
 
 export default function AdminPages() {
-  const { pages, addPage, updatePage, deletePage, courses } = useContent();
+  const { pages, addPage, updatePage, deletePage } = useContent();
   
   const [editingId, setEditingId] = useState<string>('');
   const [formData, setFormData] = useState<Omit<CustomPage, 'id'>>({
     title: '',
     slug: '',
-    courseId: '',
     sections: [],
   });
-  const [pageType, setPageType] = useState<'standalone' | 'course' | 'news'>('standalone');
   const [newSection, setNewSection] = useState<Partial<PageSection>>({
     type: 'hero',
     data: {},
@@ -61,7 +60,6 @@ export default function AdminPages() {
         setFormData({
           title: page.title,
           slug: page.slug,
-          courseId: page.courseId || '',
           sections: page.sections,
         });
       }
@@ -121,7 +119,7 @@ export default function AdminPages() {
       }
 
       setEditingId('');
-      setFormData({ title: '', slug: '', courseId: '', sections: [] });
+      setFormData({ title: '', slug: '', sections: [] });
     } catch (error) {
       console.error('Error saving page:', error);
       setMessage('Error menyimpan page');
@@ -138,7 +136,7 @@ export default function AdminPages() {
       await deletePage(id);
       setMessage('Page berhasil dihapus');
       setEditingId('');
-      setFormData({ title: '', slug: '', courseId: '', sections: [] });
+      setFormData({ title: '', slug: '', sections: [] });
     } catch (error) {
       console.error('Error deleting page:', error);
       setMessage('Error menghapus page');
@@ -241,13 +239,11 @@ export default function AdminPages() {
               </div>
             </div>
             <div>
-              <label className={labelClass}>Background Image URL</label>
-              <input
-                type="text"
-                placeholder="https://example.com/image.jpg"
+              <ImageUpload
                 value={section.data.image || ''}
-                onChange={(e) => handleUpdateSectionData(section.id, 'image', e.target.value)}
-                className={inputClass}
+                onChange={(url) => handleUpdateSectionData(section.id, 'image', url)}
+                folder="pages"
+                label="Background Image"
               />
             </div>
           </>
@@ -287,13 +283,11 @@ export default function AdminPages() {
               />
             </div>
             <div>
-              <label className={labelClass}>URL Gambar *</label>
-              <input
-                type="text"
-                placeholder="https://example.com/image.jpg"
+              <ImageUpload
                 value={section.data.image || ''}
-                onChange={(e) => handleUpdateSectionData(section.id, 'image', e.target.value)}
-                className={inputClass}
+                onChange={(url) => handleUpdateSectionData(section.id, 'image', url)}
+                folder="pages"
+                label="Gambar *"
               />
             </div>
             <div>
@@ -356,13 +350,12 @@ export default function AdminPages() {
               />
             </div>
             <div>
-              <label className={labelClass}>URL Gambar (satu per baris)</label>
-              <textarea
-                placeholder="https://example.com/img1.jpg&#10;https://example.com/img2.jpg&#10;https://example.com/img3.jpg"
-                value={(section.data.images || []).join('\n')}
-                onChange={(e) => handleUpdateSectionData(section.id, 'images', e.target.value.split('\n').filter(url => url.trim()))}
-                className={inputClass}
-                rows={6}
+              <MultiImageUpload
+                value={section.data.images || []}
+                onChange={(urls) => handleUpdateSectionData(section.id, 'images', urls)}
+                folder="pages"
+                label="Gambar-gambar"
+                maxFiles={20}
               />
             </div>
             <div>
@@ -487,13 +480,12 @@ export default function AdminPages() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Gambar (URL, satu per baris)</label>
-                  <textarea
-                    placeholder="https://example.com/img1.jpg"
-                    value={(section.data.leftImages || []).join('\n')}
-                    onChange={(e) => handleUpdateSectionData(section.id, 'leftImages', e.target.value.split('\n').filter(url => url.trim()))}
-                    className={inputClass}
-                    rows={2}
+                  <MultiImageUpload
+                    value={section.data.leftImages || []}
+                    onChange={(urls) => handleUpdateSectionData(section.id, 'leftImages', urls)}
+                    folder="pages"
+                    label="Gambar Kolom Kiri"
+                    maxFiles={5}
                   />
                 </div>
               </div>
@@ -522,13 +514,12 @@ export default function AdminPages() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Gambar (URL, satu per baris)</label>
-                  <textarea
-                    placeholder="https://example.com/img1.jpg"
-                    value={(section.data.rightImages || []).join('\n')}
-                    onChange={(e) => handleUpdateSectionData(section.id, 'rightImages', e.target.value.split('\n').filter(url => url.trim()))}
-                    className={inputClass}
-                    rows={2}
+                  <MultiImageUpload
+                    value={section.data.rightImages || []}
+                    onChange={(urls) => handleUpdateSectionData(section.id, 'rightImages', urls)}
+                    folder="pages"
+                    label="Gambar Kolom Kanan"
+                    maxFiles={5}
                   />
                 </div>
               </div>
@@ -789,13 +780,11 @@ export default function AdminPages() {
               />
             </div>
             <div>
-              <label className={labelClass}>URL Gambar *</label>
-              <input
-                type="text"
-                placeholder="https://example.com/image.jpg"
+              <ImageUpload
                 value={section.data.image || ''}
-                onChange={(e) => handleUpdateSectionData(section.id, 'image', e.target.value)}
-                className={inputClass}
+                onChange={(url) => handleUpdateSectionData(section.id, 'image', url)}
+                folder="pages"
+                label="Gambar *"
               />
             </div>
             <div>
@@ -943,49 +932,10 @@ export default function AdminPages() {
                   placeholder="e.g., robotics-beginner"
                   className="w-full px-4 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 outline-none"
                 />
+                <p className="text-xs text-gray-400 mt-1">
+                  Page dapat diakses via /pages/[slug]. Untuk menghubungkan dengan course atau news, pilih page ini di halaman admin masing-masing.
+                </p>
               </div>
-
-              {/* Course */}
-              <div>
-                <label htmlFor="course-select" className="block text-sm font-medium text-white mb-2">
-                  Page Type
-                </label>
-                <select
-                  id="page-type-select"
-                  value={pageType}
-                  onChange={(e) => {
-                    setPageType(e.target.value as any);
-                    setFormData({ ...formData, courseId: '' });
-                  }}
-                  className="w-full px-4 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 outline-none mb-4"
-                >
-                  <option value="standalone">Standalone Page (Akses via /pages/slug)</option>
-                  <option value="course">Linked to Course</option>
-                  <option value="news">Linked to News</option>
-                </select>
-              </div>
-
-              {/* Course Selection - hanya tampil kalau tipe course */}
-              {pageType === 'course' && (
-                <div>
-                  <label htmlFor="course-select" className="block text-sm font-medium text-white mb-2">
-                    Pilih Course
-                  </label>
-                  <select
-                    id="course-select"
-                    value={formData.courseId || ''}
-                    onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 outline-none"
-                  >
-                    <option value="">-- Pilih Course --</option>
-                    {courses.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
 
               {/* Sections */}
               <div>
@@ -1083,7 +1033,7 @@ export default function AdminPages() {
                 <button
                   onClick={() => {
                     setEditingId('');
-                    setFormData({ title: '', slug: '', courseId: '', sections: [] });
+                    setFormData({ title: '', slug: '', sections: [] });
                   }}
                   className="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
@@ -1112,12 +1062,7 @@ export default function AdminPages() {
                     }`}
                   >
                     <div className="font-semibold">{page.title}</div>
-                    <div className="text-xs">{page.slug}</div>
-                    {page.courseId && (
-                      <div className="text-xs text-yellow-400">
-                        Course: {courses.find((c) => c.id === page.courseId)?.title}
-                      </div>
-                    )}
+                    <div className="text-xs text-gray-400">/pages/{page.slug}</div>
                     <div className="text-xs">{page.sections?.length || 0} sections</div>
                   </button>
                 ))

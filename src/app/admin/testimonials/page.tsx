@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AdminLayout } from '@/components/admin';
+import { AdminLayout, ImageUpload } from '@/components/admin';
 import { ProtectedRoute } from '@/components/shared';
 import { useContent, TestimonialItem } from '@/context/ContentContext';
 import { Plus, Trash2, Edit2, Star } from 'lucide-react';
@@ -113,25 +113,12 @@ export default function TestimonialsAdmin() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-900 text-sm font-semibold mb-2">
-                      Foto (URL)
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="text"
-                        value={formData.photo || ''}
-                        onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
-                        className="flex-1 px-4 py-2 bg-gray-50 text-slate-900 rounded-lg border border-gray-300 focus:border-cyan-500 outline-none transition"
-                        placeholder="Masukkan URL foto (opsional)"
-                      />
-                      {formData.photo && (
-                        <img
-                          src={formData.photo}
-                          alt="Preview"
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-                        />
-                      )}
-                    </div>
+                    <ImageUpload
+                      value={formData.photo || ''}
+                      onChange={(url) => setFormData({ ...formData, photo: url })}
+                      folder="testimonials"
+                      label="Foto (Opsional)"
+                    />
                     <p className="text-xs text-gray-500 mt-1">Kosongkan jika tidak ada foto, akan ditampilkan inisial nama</p>
                   </div>
 

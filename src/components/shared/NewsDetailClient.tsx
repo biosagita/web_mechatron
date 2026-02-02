@@ -13,29 +13,48 @@ interface NewsDetailClientProps {
   slug: string;
 }
 
-export function NewsDetailClient({ slug }: NewsDetailClientProps) {
-  const { news, getPageBySlug } = useContent();
+export function NewsDetailClient({ slug: propSlug }: NewsDetailClientProps) {
+  const { news, getPageBySlug, loading: contextLoading } = useContent();
   const router = useRouter();
   const [currentNews, setCurrentNews] = useState<any>(null);
   const [customPage, setCustomPage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [actualSlug, setActualSlug] = useState<string>(propSlug);
+
+  // Get actual slug from URL on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathParts = window.location.pathname.split('/');
+      const slugFromUrl = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+      if (slugFromUrl && slugFromUrl !== 'placeholder') {
+        setActualSlug(slugFromUrl);
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    if (news && news.length > 0) {
-      const found = findNewsBySlug(news, slug);
-      setCurrentNews(found);
+    // Wait for context and actual slug
+    if (contextLoading) return;
+    if (actualSlug === 'placeholder') return;
+    if (!news || news.length === 0) return;
 
-      // Check if news has custom page
-      if (found && found.pageSlug) {
-        const page = getPageBySlug(found.pageSlug);
-        setCustomPage(page);
-      }
+    console.log('[NewsDetail] Looking for news with slug:', actualSlug);
+    const found = findNewsBySlug(news, actualSlug);
+    console.log('[NewsDetail] Found news:', found);
+    setCurrentNews(found);
 
-      setIsLoading(false);
+    // Check if news has custom page
+    if (found && found.pageSlug) {
+      console.log('[NewsDetail] Looking for page with slug:', found.pageSlug);
+      const page = getPageBySlug(found.pageSlug);
+      console.log('[NewsDetail] Found page:', page);
+      setCustomPage(page);
     }
-  }, [news, slug, getPageBySlug]);
 
-  if (isLoading) {
+    setIsLoading(false);
+  }, [news, actualSlug, getPageBySlug, contextLoading]);
+
+  if (isLoading || contextLoading) {
     return (
       <main className="bg-white">
         <Navbar />
@@ -131,7 +150,7 @@ export function NewsDetailClient({ slug }: NewsDetailClientProps) {
             <div className="flex gap-4">
               <button 
                 onClick={() => {
-                  const url = `${window.location.origin}/news/${slug}`;
+                  const url = `${window.location.origin}/news/${actualSlug}`;
                   navigator.share?.({ title: currentNews.title, url }) || navigator.clipboard.writeText(url);
                 }}
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
