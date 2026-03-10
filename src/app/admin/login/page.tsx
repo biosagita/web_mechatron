@@ -11,9 +11,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { login } = useAuth();
+
+  const { login, isLoggedIn } = useAuth();
   const router = useRouter();
+
+  // Redirect if already logged in
+  if (isLoggedIn) {
+    router.push('/admin');
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,13 +71,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Demo Credentials */}
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-blue-900 text-sm font-semibold mb-2">Demo Credentials:</p>
-            <p className="text-blue-800 text-sm">Email: <span className="font-mono">admin@mechatron.id</span></p>
-            <p className="text-blue-800 text-sm">Password: <span className="font-mono">Mechatron123!</span></p>
-          </div>
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Field */}
@@ -88,6 +87,7 @@ export default function LoginPage() {
                   className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-slate-900 placeholder-slate-400"
                   placeholder="admin@mechatron.id"
                   disabled={isLoading}
+                  required
                 />
               </div>
             </div>
@@ -106,6 +106,7 @@ export default function LoginPage() {
                   className="w-full pl-10 pr-12 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-slate-900 placeholder-slate-400"
                   placeholder="••••••••"
                   disabled={isLoading}
+                  required
                 />
                 <button
                   type="button"
@@ -116,19 +117,6 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="remember"
-                className="w-4 h-4 border-slate-300 rounded cursor-pointer"
-                disabled={isLoading}
-              />
-              <label htmlFor="remember" className="ml-2 text-sm text-slate-600 cursor-pointer">
-                Ingat saya
-              </label>
             </div>
 
             {/* Login Button */}

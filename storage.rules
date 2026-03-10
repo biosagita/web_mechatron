@@ -1,34 +1,45 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Allow read access to all files
+    // Allow read access to all files (public website needs to display images)
     match /{allPaths=**} {
       allow read: if true;
     }
     
-    // Allow write access to specific folders with size limit
+    // Allow write access only to authenticated users with size & content-type limits
     match /gallery/{allPaths=**} {
-      allow write: if request.resource.size < 10 * 1024 * 1024; // 10MB
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
     
     match /testimonials/{allPaths=**} {
-      allow write: if request.resource.size < 5 * 1024 * 1024; // 5MB
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
     
     match /news/{allPaths=**} {
-      allow write: if request.resource.size < 10 * 1024 * 1024; // 10MB
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
     
     match /partners/{allPaths=**} {
-      allow write: if request.resource.size < 10 * 1024 * 1024; // 10MB
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
     
     match /pages/{allPaths=**} {
-      allow write: if request.resource.size < 10 * 1024 * 1024; // 10MB
+      allow write: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
     
     match /uploads/{allPaths=**} {
-      allow write: if request.resource.size < 50 * 1024 * 1024; // 50MB
+      allow write: if request.auth != null
+        && request.resource.size < 50 * 1024 * 1024;
     }
   }
 }

@@ -10,11 +10,12 @@ Website modern untuk kursus robotik dengan sistem CMS admin lengkap.
 ## ✨ Features
 
 - **Landing Page** - Hero, Features, Courses, Gallery, Testimonials
-- **Page Builder** - 15 jenis section untuk halaman custom
+- **Event Popup** - Manajemen popup event terjadwal di halaman utama
+- **Page Builder** - 15 jenis section dengan Live Preview
 - **Admin Dashboard** - CRUD untuk semua konten
-- **Authentication** - Login admin dengan Firebase
-- **File Upload** - Upload gambar ke Firebase Storage
-- **Rich Text Editor** - TipTap editor untuk konten
+- **Authentication & Security** - Firebase Auth dengan Firestore/Storage Rules ketat (melindungi dari XSS & akses ilegal)
+- **File Upload** - Upload gambar ke Firebase Storage dengan validasi
+- **Rich Text Editor** - TipTap editor untuk konten tersanitasi
 
 ## 🚀 Quick Start
 

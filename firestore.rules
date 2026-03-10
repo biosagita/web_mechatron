@@ -1,51 +1,57 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Registrations - allow read/write for now (test mode)
-    match /registrations/{document=**} {
-      allow read, write: if true;
-    }
-    
-    // News
-    match /news/{document=**} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Gallery
-    match /gallery/{document=**} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Schedule
-    match /schedule/{document=**} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Courses
-    match /courses/{document=**} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Testimonials
-    match /testimonials/{document=**} {
-      allow read: if true;
-      allow write: if true;
+    // Helper: check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
-    // Custom Pages
-    match /pages/{document=**} {
-      allow read: if true;
-      allow write: if true;
+    // Registrations - public can create, only authenticated can read/update/delete
+    match /registrations/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if isAuthenticated();
     }
     
-    // Settings (for partner banner, etc)
+    // News - public can read, only authenticated can write
+    match /news/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Gallery - public can read, only authenticated can write
+    match /gallery/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Schedule - public can read, only authenticated can write
+    match /schedule/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Courses - public can read, only authenticated can write
+    match /courses/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Testimonials - public can read, only authenticated can write
+    match /testimonials/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Custom Pages - public can read, only authenticated can write
+    match /pages/{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Settings (for partner banner, etc) - public can read, only authenticated can write
     match /settings/{document=**} {
       allow read: if true;
-      allow write: if true;
+      allow write: if isAuthenticated();
     }
   }
 }

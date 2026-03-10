@@ -12,7 +12,7 @@ interface PageRendererProps {
 
 export default function PageRenderer({ sections, courseData }: PageRendererProps) {
   const { gallery } = useContent();
-  
+
   const renderSection = (section: PageSection): ReactNode => {
     switch (section.type) {
       // ============ HERO ADVANCED ============
@@ -22,14 +22,14 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
             key={section.id}
             className="relative min-h-[500px] md:min-h-[600px] flex items-center justify-center text-white bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: section.data.image 
-                ? `url(${section.data.image})` 
+              backgroundImage: section.data.image
+                ? `url(${section.data.image})`
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             }}
           >
             {/* Overlay */}
             <div className={`absolute inset-0 ${section.data.image ? 'bg-black/60' : 'bg-black/20'}`}></div>
-            
+
             {/* Content */}
             <div className="relative z-10 text-center max-w-4xl px-6 md:px-8">
               {section.data.badge && (
@@ -50,7 +50,7 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
                   {section.data.description}
                 </p>
               )}
-              
+
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {section.data.buttonText && (
@@ -72,7 +72,7 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
                 )}
               </div>
             </div>
-            
+
             {/* Scroll indicator */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
               <div className="w-8 h-12 border-2 border-white/50 rounded-full flex justify-center pt-2">
@@ -117,15 +117,21 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
                   </a>
                 )}
               </div>
-              
+
               {/* Image */}
               <div className={`${imageRight ? 'lg:order-2' : 'lg:order-1'}`}>
                 <div className="relative">
-                  <img
-                    src={section.data.image || '/images/placeholder.jpg'}
-                    alt={section.data.title || 'Section image'}
-                    className="w-full h-auto rounded-2xl shadow-2xl"
-                  />
+                  {section.data.image ? (
+                    <img
+                      src={section.data.image}
+                      alt={section.data.title || 'Section image'}
+                      className="w-full h-auto rounded-2xl shadow-2xl"
+                    />
+                  ) : (
+                    <div className="w-full h-64 bg-gray-800 rounded-2xl shadow-2xl flex items-center justify-center text-gray-500">
+                      <span>No image uploaded</span>
+                    </div>
+                  )}
                   {/* Decorative elements */}
                   <div className="absolute -bottom-4 -right-4 w-full h-full border-2 border-orange-500/30 rounded-2xl -z-10"></div>
                 </div>
@@ -238,7 +244,7 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
                   </div>
                 )}
               </div>
-              
+
               {/* Right Column */}
               <div>
                 {section.data.rightTitle && (
@@ -316,7 +322,7 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
           return match ? match[1] : null;
         };
         const videoId = getYouTubeId(section.data.url || '');
-        
+
         return (
           <div key={section.id} className="py-16 md:py-24 px-6 md:px-8 bg-gray-900">
             <div className="max-w-4xl mx-auto">
@@ -387,12 +393,12 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
       // ============ CTA SECTION ============
       case 'cta':
         return (
-          <div 
-            key={section.id} 
+          <div
+            key={section.id}
             className="py-16 md:py-24 px-6 md:px-8 bg-cover bg-center relative"
             style={{
-              backgroundImage: section.data.backgroundImage 
-                ? `url(${section.data.backgroundImage})` 
+              backgroundImage: section.data.backgroundImage
+                ? `url(${section.data.backgroundImage})`
                 : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
             }}
           >
@@ -459,11 +465,17 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 text-center">{section.data.title}</h2>
               )}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src={section.data.image || ''}
-                  alt={section.data.description || 'Section image'}
-                  className="w-full h-auto"
-                />
+                {section.data.image ? (
+                  <img
+                    src={section.data.image}
+                    alt={section.data.description || 'Section image'}
+                    className="w-full h-auto"
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-800 flex items-center justify-center text-gray-500">
+                    <span>No image uploaded</span>
+                  </div>
+                )}
               </div>
               {section.data.caption && (
                 <p className="text-center text-gray-400 mt-4 italic">{section.data.caption}</p>
@@ -527,8 +539,8 @@ export default function PageRenderer({ sections, courseData }: PageRendererProps
       // ============ SPACER ============
       case 'spacer':
         return (
-          <div 
-            key={section.id} 
+          <div
+            key={section.id}
             className="bg-gray-900"
             style={{ height: `${section.data.height || 60}px` }}
           ></div>

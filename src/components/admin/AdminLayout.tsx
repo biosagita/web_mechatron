@@ -3,19 +3,20 @@
 import React, { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  Menu, 
-  X, 
-  LayoutDashboard, 
-  FileText, 
-  Image as ImageIcon, 
-  BookOpen, 
+import {
+  Menu,
+  X,
+  LayoutDashboard,
+  FileText,
+  Image as ImageIcon,
+  BookOpen,
   LogOut,
   ChevronDown,
   UserCheck,
   MessageSquare,
   Building2,
-  Layers
+  Layers,
+  Bell
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -26,9 +27,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm('Apakah Anda yakin ingin logout?')) {
-      logout();
+      await logout();
       router.push('/admin/login');
     }
   };
@@ -74,6 +75,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       href: '/admin/partners',
       icon: <Building2 size={20} />,
     },
+    {
+      label: 'Popup Event',
+      href: '/admin/popup',
+      icon: <Bell size={20} />,
+    },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -96,11 +102,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                isActive(item.href)
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
-                  : 'hover:bg-gray-100 text-slate-700'
-              }`}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive(item.href)
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
+                : 'hover:bg-gray-100 text-slate-700'
+                }`}
             >
               <span>{item.icon}</span>
               {sidebarOpen && <span className="font-medium">{item.label}</span>}
@@ -113,7 +118,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           {sidebarOpen && user && (
             <div className="px-4 py-2 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-xs text-gray-600 font-semibold">LOGGED IN AS</p>
-              <p className="text-sm text-slate-900 font-semibold truncate">{user.email}</p>
+              <p className="text-sm text-slate-900 font-semibold truncate">{user.email || 'Admin'}</p>
             </div>
           )}
           <button

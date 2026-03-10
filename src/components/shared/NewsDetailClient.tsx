@@ -5,8 +5,9 @@ import { useContent } from '@/context/ContentContext';
 import { Calendar, ArrowLeft, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { findNewsBySlug } from '@/utils';
+import DOMPurify from 'dompurify';
 import PageRenderer from './PageRenderer';
 
 interface NewsDetailClientProps {
@@ -95,7 +96,7 @@ export function NewsDetailClient({ slug: propSlug }: NewsDetailClientProps) {
         <Footer />
       </>
     );
-  }  return (
+  } return (
     <main className="bg-white">
       <Navbar />
       <article className="min-h-screen py-12 md:py-20 bg-white">
@@ -111,8 +112,8 @@ export function NewsDetailClient({ slug: propSlug }: NewsDetailClientProps) {
           {/* Featured Image */}
           {currentNews.image && (
             <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
-              <img 
-                src={currentNews.image} 
+              <img
+                src={currentNews.image}
                 alt={currentNews.title}
                 className="w-full h-96 object-cover"
               />
@@ -138,8 +139,8 @@ export function NewsDetailClient({ slug: propSlug }: NewsDetailClientProps) {
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none mb-12">
-            <div 
-              dangerouslySetInnerHTML={{ __html: currentNews.content }}
+            <div
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(currentNews.content) }}
               className="leading-relaxed text-gray-700"
             />
           </div>
@@ -148,7 +149,7 @@ export function NewsDetailClient({ slug: propSlug }: NewsDetailClientProps) {
           <div className="border-t border-b border-gray-200 py-8 mb-8">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Bagikan Berita Ini</h3>
             <div className="flex gap-4">
-              <button 
+              <button
                 onClick={() => {
                   const url = `${window.location.origin}/news/${actualSlug}`;
                   navigator.share?.({ title: currentNews.title, url }) || navigator.clipboard.writeText(url);

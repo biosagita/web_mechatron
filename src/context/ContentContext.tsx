@@ -1,20 +1,21 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
+import {
+  collection,
+  addDoc,
+  getDocs,
   getDoc,
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  query, 
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
   orderBy,
   Timestamp,
   setDoc
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export interface NewsItem {
   id: string;
@@ -91,24 +92,24 @@ export interface PageSection {
     description?: string;
     image?: string;
     content?: string;
-    
+
     // Buttons
     buttonText?: string;
     buttonLink?: string;
     buttonText2?: string;
     buttonLink2?: string;
-    
+
     // Hero / CTA
     badge?: string;
     backgroundImage?: string;
-    
+
     // Text-Image
     imagePosition?: 'left' | 'right';
-    
+
     // Image Grid
     images?: string[];
     columns?: number;
-    
+
     // Stats / Features / Cards
     items?: Array<{
       title?: string;
@@ -119,13 +120,13 @@ export interface PageSection {
       image?: string;
       link?: string;
     }> | string[];
-    
+
     // Testimonial
     quote?: string;
     author?: string;
     role?: string;
     avatar?: string;
-    
+
     // Two Column
     leftTitle?: string;
     leftContent?: string;
@@ -133,17 +134,17 @@ export interface PageSection {
     rightTitle?: string;
     rightContent?: string;
     rightImages?: string[];
-    
+
     // Video
     url?: string;
-    
+
     // Image
     caption?: string;
-    
+
     // Divider
     style?: 'normal' | 'thick';
     color?: string;
-    
+
     // Spacer
     height?: number;
   };
@@ -156,6 +157,15 @@ export interface CustomPage {
   sections: PageSection[];
   createdAt?: any;
   updatedAt?: any;
+}
+
+export interface PopupData {
+  isActive: boolean;
+  title: string;
+  image: string;
+  newsSlug: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface ContentContextType {
@@ -206,6 +216,10 @@ interface ContentContextType {
   partnerBanner: string;
   updatePartnerBanner: (url: string) => void;
 
+  // Popup
+  popup: PopupData | null;
+  updatePopup: (data: PopupData) => Promise<void>;
+
   // Loading state
   loading: boolean;
 }
@@ -218,32 +232,48 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [pages, setPages] = useState<CustomPage[]>([]);
   const [partnerBanner, setPartnerBanner] = useState<string>('');
+  const [popup, setPopup] = useState<PopupData | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Load data from Firestore on client mount
   useEffect(() => {
-    console.log('[ContentContext] Component mounted, checking window...');
     if (typeof window !== 'undefined') {
-      console.log('[ContentContext] Window is defined, calling loadAllDataFromFirestore');
       loadAllDataFromFirestore();
     }
   }, []);
 
+  // Load registrations when user becomes authenticated
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadRegistrationsFromFirestore();
+      } else {
+        setRegistrations([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const loadAllDataFromFirestore = async () => {
     try {
-      console.log('[ContentContext] Starting loadAllDataFromFirestore...');
-      await Promise.all([
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Starting loadAllDataFromFirestore...');
+      const loadTasks = [
         loadNewsFromFirestore(),
         loadGalleryFromFirestore(),
-        loadRegistrationsFromFirestore(),
         loadTestimonialsFromFirestore(),
         loadCoursesFromFirestore(),
         loadPagesFromFirestore(),
         loadPartnerBannerFromFirestore(),
-      ]);
-      console.log('[ContentContext] All data loaded successfully');
+        loadPopupFromFirestore(),
+      ];
+      // Only load registrations if user is authenticated (Firestore rules require auth for read)
+      if (auth.currentUser) {
+        loadTasks.push(loadRegistrationsFromFirestore());
+      }
+      await Promise.all(loadTasks);
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] All data loaded successfully');
     } catch (error) {
-      console.error('[ContentContext] Error loading data:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[ContentContext] Error loading data:', error);
     } finally {
       setLoading(false);
     }
@@ -251,14 +281,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const loadNewsFromFirestore = async () => {
     try {
-      console.log('[ContentContext] Starting loadNewsFromFirestore...');
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Starting loadNewsFromFirestore...');
       const q = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      console.log('[ContentContext] Got news query result:', querySnapshot.size, 'documents');
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Got news query result:', querySnapshot.size, 'documents');
       const data: NewsItem[] = [];
       querySnapshot.forEach((docSnap) => {
         const docData = docSnap.data();
-        console.log('[ContentContext] Processing news item:', docSnap.id, docData.title);
+        if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Processing news item:', docSnap.id, docData.title);
         // Convert Firestore Timestamp to string if needed
         let date = docData.date;
         if (!date && docData.createdAt && typeof docData.createdAt === 'object' && 'seconds' in docData.createdAt) {
@@ -278,10 +308,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           updatedAt: docData.updatedAt,
         });
       });
-      console.log('[ContentContext] Loaded news from Firestore:', data.length, 'items');
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Loaded news from Firestore:', data.length, 'items');
       setNews(data);
     } catch (error) {
-      console.error('[ContentContext] Error loading news from Firestore:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[ContentContext] Error loading news from Firestore:', error);
       // Keep using default data if Firestore fails
     }
   };
@@ -300,10 +330,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           image: docData.image || '',
         });
       });
-      console.log('[ContentContext] Loaded gallery from Firestore:', data.length, 'items');
+      if (process.env.NODE_ENV === 'development') console.log('[ContentContext] Loaded gallery from Firestore:', data.length, 'items');
       setGallery(data);
     } catch (error) {
-      console.error('[ContentContext] Error loading gallery from Firestore:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[ContentContext] Error loading gallery from Firestore:', error);
     }
   };
 
@@ -321,16 +351,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           const date = new Date(tanggalDaftar.seconds * 1000);
           tanggalDaftar = date.toLocaleDateString('id-ID');
         }
-        data.push({ 
-          id: docSnap.id, 
+        data.push({
+          id: docSnap.id,
           ...docData,
           tanggalDaftar: tanggalDaftar || new Date().toLocaleDateString('id-ID')
         } as RegistrationItem);
       });
-      console.log('Loaded registrations from Firestore:', data);
+      if (process.env.NODE_ENV === 'development') console.log('Loaded registrations from Firestore:', data);
       setRegistrations(data);
     } catch (error) {
-      console.error('Error loading registrations:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error loading registrations:', error);
     }
   };
 
@@ -341,10 +371,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       querySnapshot.forEach((docSnap) => {
         data.push({ id: docSnap.id, ...docSnap.data() } as TestimonialItem);
       });
-      console.log('Loaded testimonials from Firestore:', data);
+      if (process.env.NODE_ENV === 'development') console.log('Loaded testimonials from Firestore:', data);
       setTestimonials(data);
     } catch (error) {
-      console.error('Error loading testimonials:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error loading testimonials:', error);
     }
   };
 
@@ -358,9 +388,21 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           setPartnerBanner(data.partnerBanner);
         }
       }
-      console.log('Loaded partner banner from Firestore');
+      if (process.env.NODE_ENV === 'development') console.log('Loaded partner banner from Firestore');
     } catch (error) {
-      console.error('Error loading partner banner:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error loading partner banner:', error);
+    }
+  };
+
+  const loadPopupFromFirestore = async () => {
+    try {
+      const popupRef = doc(db, 'settings', 'popup');
+      const docSnap = await getDoc(popupRef);
+      if (docSnap.exists()) {
+        setPopup(docSnap.data() as PopupData);
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') console.error('Error loading popup:', error);
     }
   };
 
@@ -445,48 +487,48 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   // Gallery handlers
   const addGallery = async (item: GalleryItem) => {
     try {
-      console.log('[Gallery] Adding gallery item:', item);
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Adding gallery item:', item);
       const docRef = await addDoc(collection(db, 'gallery'), {
         title: item.title,
         category: item.category,
         image: item.image || '',
       });
-      console.log('[Gallery] Successfully added with ID:', docRef.id);
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Successfully added with ID:', docRef.id);
       setGallery([...gallery, { ...item, id: docRef.id }]);
     } catch (error: any) {
-      console.error('[Gallery] Error adding gallery item:', error.message || error);
-      console.error('[Gallery] Full error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Error adding gallery item:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Full error:', error);
       throw error;
     }
   };
 
   const updateGallery = async (id: string, item: GalleryItem) => {
     try {
-      console.log('[Gallery] Updating gallery item:', id, item);
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Updating gallery item:', id, item);
       const galleryRef = doc(db, 'gallery', id);
       await updateDoc(galleryRef, {
         title: item.title,
         category: item.category,
         image: item.image || '',
       });
-      console.log('[Gallery] Successfully updated');
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Successfully updated');
       setGallery(gallery.map((g) => (g.id === id ? item : g)));
     } catch (error: any) {
-      console.error('[Gallery] Error updating gallery item:', error.message || error);
-      console.error('[Gallery] Full error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Error updating gallery item:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Full error:', error);
       throw error;
     }
   };
 
   const deleteGallery = async (id: string) => {
     try {
-      console.log('[Gallery] Deleting gallery item:', id);
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Deleting gallery item:', id);
       await deleteDoc(doc(db, 'gallery', id));
-      console.log('[Gallery] Successfully deleted');
+      if (process.env.NODE_ENV === 'development') console.log('[Gallery] Successfully deleted');
       setGallery(gallery.filter((g) => g.id !== id));
     } catch (error: any) {
-      console.error('[Gallery] Error deleting gallery item:', error.message || error);
-      console.error('[Gallery] Full error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Error deleting gallery item:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Gallery] Full error:', error);
       throw error;
     }
   };
@@ -513,10 +555,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       });
       const newItem: RegistrationItem = { ...item, id: docRef.id, tanggalDaftar: new Date().toISOString() };
       setRegistrations([newItem, ...registrations]);
-      console.log('Registration added to Firestore:', newItem);
+      if (process.env.NODE_ENV === 'development') console.log('Registration added to Firestore:', newItem);
       return docRef.id;
     } catch (error) {
-      console.error('Error adding registration:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error adding registration:', error);
       throw error;
     }
   };
@@ -526,9 +568,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const registrationRef = doc(db, 'registrations', id);
       await updateDoc(registrationRef, item);
       setRegistrations(registrations.map((r) => (r.id === id ? { ...r, ...item } : r)));
-      console.log('Registration updated:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Registration updated:', id);
     } catch (error) {
-      console.error('Error updating registration:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error updating registration:', error);
       throw error;
     }
   };
@@ -537,9 +579,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     try {
       await deleteDoc(doc(db, 'registrations', id));
       setRegistrations(registrations.filter((r) => r.id !== id));
-      console.log('Registration deleted:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Registration deleted:', id);
     } catch (error) {
-      console.error('Error deleting registration:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error deleting registration:', error);
       throw error;
     }
   };
@@ -551,9 +593,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const docRef = await addDoc(collection(db, 'testimonials'), itemData);
       const newItem = { ...item, id: docRef.id };
       setTestimonials([...testimonials, newItem]);
-      console.log('Testimonial added to Firestore:', newItem);
+      if (process.env.NODE_ENV === 'development') console.log('Testimonial added to Firestore:', newItem);
     } catch (error) {
-      console.error('Error adding testimonial:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error adding testimonial:', error);
       throw error;
     }
   };
@@ -564,9 +606,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const testimonialRef = doc(db, 'testimonials', id);
       await updateDoc(testimonialRef, itemData);
       setTestimonials(testimonials.map((t) => (t.id === id ? item : t)));
-      console.log('Testimonial updated:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Testimonial updated:', id);
     } catch (error) {
-      console.error('Error updating testimonial:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error updating testimonial:', error);
       throw error;
     }
   };
@@ -575,9 +617,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     try {
       await deleteDoc(doc(db, 'testimonials', id));
       setTestimonials(testimonials.filter((t) => t.id !== id));
-      console.log('Testimonial deleted:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Testimonial deleted:', id);
     } catch (error) {
-      console.error('Error deleting testimonial:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error deleting testimonial:', error);
       throw error;
     }
   };
@@ -590,10 +632,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       querySnapshot.forEach((docSnap) => {
         data.push({ id: docSnap.id, ...docSnap.data() } as CourseItem);
       });
-      console.log('Loaded courses from Firestore:', data);
+      if (process.env.NODE_ENV === 'development') console.log('Loaded courses from Firestore:', data);
       setCourses(data);
     } catch (error) {
-      console.error('Error loading courses:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error loading courses:', error);
     }
   };
 
@@ -604,9 +646,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const docRef = await addDoc(collection(db, 'courses'), itemData);
       const newItem = { ...item, id: docRef.id };
       setCourses([...courses, newItem]);
-      console.log('Course added to Firestore:', newItem);
+      if (process.env.NODE_ENV === 'development') console.log('Course added to Firestore:', newItem);
     } catch (error) {
-      console.error('Error adding course:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error adding course:', error);
       throw error;
     }
   };
@@ -617,9 +659,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const courseRef = doc(db, 'courses', id);
       await updateDoc(courseRef, itemData);
       setCourses(courses.map((c) => (c.id === id ? item : c)));
-      console.log('Course updated:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Course updated:', id);
     } catch (error) {
-      console.error('Error updating course:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error updating course:', error);
       throw error;
     }
   };
@@ -628,9 +670,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     try {
       await deleteDoc(doc(db, 'courses', id));
       setCourses(courses.filter((c) => c.id !== id));
-      console.log('Course deleted:', id);
+      if (process.env.NODE_ENV === 'development') console.log('Course deleted:', id);
     } catch (error) {
-      console.error('Error deleting course:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error deleting course:', error);
       throw error;
     }
   };
@@ -641,9 +683,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       const settingsRef = doc(db, 'settings', 'partnerBanner');
       await setDoc(settingsRef, { partnerBanner: url }, { merge: true });
       setPartnerBanner(url);
-      console.log('Partner banner updated:', url);
+      if (process.env.NODE_ENV === 'development') console.log('Partner banner updated:', url);
     } catch (error) {
-      console.error('Error updating partner banner:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error updating partner banner:', error);
       throw error;
     }
   };
@@ -657,10 +699,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       querySnapshot.forEach((docSnap) => {
         data.push({ id: docSnap.id, ...docSnap.data() } as CustomPage);
       });
-      console.log('Loaded pages from Firestore:', data);
+      if (process.env.NODE_ENV === 'development') console.log('Loaded pages from Firestore:', data);
       setPages(data);
     } catch (error) {
-      console.error('Error loading pages from Firestore:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error loading pages from Firestore:', error);
       setPages([]);
     }
   };
@@ -668,7 +710,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   // Page handlers
   const addPage = async (item: Omit<CustomPage, 'id'>) => {
     try {
-      console.log('[Pages] Adding page:', item);
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Adding page:', item);
       const docRef = await addDoc(collection(db, 'pages'), {
         ...item,
         createdAt: Timestamp.now(),
@@ -676,44 +718,55 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       });
       const newPage: CustomPage = { ...item, id: docRef.id };
       setPages([...pages, newPage]);
-      console.log('[Pages] Successfully added with ID:', docRef.id);
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Successfully added with ID:', docRef.id);
       return docRef.id;
     } catch (error: any) {
-      console.error('[Pages] Error adding page:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Pages] Error adding page:', error.message || error);
       throw error;
     }
   };
 
   const updatePage = async (id: string, item: Omit<CustomPage, 'id'>) => {
     try {
-      console.log('[Pages] Updating page:', id, item);
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Updating page:', id, item);
       const pageRef = doc(db, 'pages', id);
       await updateDoc(pageRef, {
         ...item,
         updatedAt: Timestamp.now(),
       });
       setPages(pages.map((p) => (p.id === id ? { id, ...item } : p)));
-      console.log('[Pages] Successfully updated');
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Successfully updated');
     } catch (error: any) {
-      console.error('[Pages] Error updating page:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Pages] Error updating page:', error.message || error);
       throw error;
     }
   };
 
   const deletePage = async (id: string) => {
     try {
-      console.log('[Pages] Deleting page:', id);
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Deleting page:', id);
       await deleteDoc(doc(db, 'pages', id));
       setPages(pages.filter((p) => p.id !== id));
-      console.log('[Pages] Successfully deleted');
+      if (process.env.NODE_ENV === 'development') console.log('[Pages] Successfully deleted');
     } catch (error: any) {
-      console.error('[Pages] Error deleting page:', error.message || error);
+      if (process.env.NODE_ENV === 'development') console.error('[Pages] Error deleting page:', error.message || error);
       throw error;
     }
   };
 
   const getPageBySlug = (slug: string): CustomPage | undefined => {
     return pages.find((p) => p.slug === slug);
+  };
+
+  const updatePopup = async (data: PopupData) => {
+    try {
+      const popupRef = doc(db, 'settings', 'popup');
+      await setDoc(popupRef, data);
+      setPopup(data);
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') console.error('Error updating popup:', error);
+      throw error;
+    }
   };
 
   return (
@@ -750,6 +803,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         getPageBySlug,
         partnerBanner,
         updatePartnerBanner,
+        popup,
+        updatePopup,
         loading,
       }}
     >

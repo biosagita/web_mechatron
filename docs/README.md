@@ -55,7 +55,12 @@ mechatron/
 | Tailwind CSS | Styling |
 | Firebase | Backend (Auth, Firestore, Storage) |
 | Lucide Icons | Icons |
-| TipTap | Rich Text Editor |
+| TipTap & DOMPurify | Rich Text Editor & XSS Protection |
+
+## 🛡️ Security Features
+- Firebase Authentication terintegrasi penuh
+- Strict Firestore & Storage Security Rules
+- Client-side XSS Protection (DOMPurify)
 
 ## 👥 Tim
 
