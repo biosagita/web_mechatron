@@ -302,23 +302,6 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       });
       console.log('[ContentContext] Loaded gallery from Firestore:', data.length, 'items');
       setGallery(data);
-      
-      // If empty, initialize with sample data
-      if (data.length === 0) {
-        const defaultGallery = [
-          { title: 'Robot Penjelajah', category: 'Autonomous Robot', image: 'https://images.unsplash.com/photo-1561432674-641681e8a874?w=500&h=400&fit=crop' },
-          { title: 'Arm Manipulator', category: 'Industrial Robotics', image: 'https://images.unsplash.com/photo-1488229297570-58520851e868?w=500&h=400&fit=crop' },
-          { title: 'Humanoid Robot', category: 'Advanced Robotics', image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=400&fit=crop' },
-          { title: 'Drone Delivery', category: 'UAV Technology', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=400&fit=crop' },
-          { title: 'Smart Home System', category: 'IoT & Automation', image: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=500&h=400&fit=crop' },
-          { title: 'Vision System', category: 'Computer Vision', image: 'https://images.unsplash.com/photo-1551431009-381d36ac3a99?w=500&h=400&fit=crop' },
-        ];
-        for (const item of defaultGallery) {
-          const docRef = await addDoc(collection(db, 'gallery'), item);
-          data.push({ id: docRef.id, ...item });
-        }
-        setGallery(data);
-      }
     } catch (error) {
       console.error('[ContentContext] Error loading gallery from Firestore:', error);
     }
@@ -359,40 +342,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         data.push({ id: docSnap.id, ...docSnap.data() } as TestimonialItem);
       });
       console.log('Loaded testimonials from Firestore:', data);
-      if (data.length > 0) {
-        setTestimonials(data);
-      } else {
-        // Initialize with default data if empty
-        const defaultTestimonials: Omit<TestimonialItem, 'id'>[] = [
-          {
-            name: 'Budi Santoso',
-            role: 'Orang Tua Siswa',
-            message: 'Anak saya sangat antusias belajar robotika di Mechatron. Dalam waktu 3 bulan sudah bisa membuat robot sederhana sendiri. Terima kasih Mechatron!',
-            rating: 5,
-            photo: '',
-          },
-          {
-            name: 'Rina Wijaya',
-            role: 'Siswa',
-            message: 'Kelas di Mechatron sangat seru dan mudah dipahami. Pengajarnya sabar dan selalu membantu ketika ada kesulitan.',
-            rating: 5,
-            photo: '',
-          },
-          {
-            name: 'Ahmad Fauzi',
-            role: 'Alumni',
-            message: 'Berkat belajar di Mechatron, saya berhasil masuk jurusan Teknik Robotika di universitas impian. Fondasi yang diberikan sangat kuat.',
-            rating: 5,
-            photo: '',
-          },
-        ];
-        // Add default data to Firestore
-        for (const item of defaultTestimonials) {
-          const docRef = await addDoc(collection(db, 'testimonials'), item);
-          data.push({ id: docRef.id, ...item });
-        }
-        setTestimonials(data);
-      }
+      setTestimonials(data);
     } catch (error) {
       console.error('Error loading testimonials:', error);
     }
@@ -641,47 +591,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         data.push({ id: docSnap.id, ...docSnap.data() } as CourseItem);
       });
       console.log('Loaded courses from Firestore:', data);
-      if (data.length > 0) {
-        setCourses(data);
-      } else {
-        // Initialize with default data if empty
-        const defaultCourses: Omit<CourseItem, 'id'>[] = [
-          {
-            title: 'Beginner Robotics',
-            highlight: 'Dasar-dasar Robotika untuk Pemula',
-            ageGroup: '8-12 Tahun',
-            tools: 'LEGO Mindstorms, Arduino',
-            details: 'Pelajari fundamental robotika, assembly dasar, dan programming sederhana untuk menggerakkan robot pertama Anda.',
-          },
-          {
-            title: 'Intermediate Programming',
-            highlight: 'Programmable Logic untuk Level Menengah',
-            ageGroup: '12-16 Tahun',
-            tools: 'Python, C++, Arduino Uno',
-            details: 'Tingkatkan skill programming Anda dengan proyek-proyek kompleks menggunakan Arduino dan bahasa pemrograman tingkat menengah.',
-          },
-          {
-            title: 'Advanced Robotics',
-            highlight: 'Robotika Lanjutan dengan AI',
-            ageGroup: '14+ Tahun',
-            tools: 'ROS, OpenCV, Machine Learning',
-            details: 'Jelajahi teknologi terdepan termasuk computer vision, autonomous navigation, dan artificial intelligence untuk robot cerdas.',
-          },
-          {
-            title: 'Drone & UAV',
-            highlight: 'Drone Programming dan Kontrol',
-            ageGroup: '12+ Tahun',
-            tools: 'DJI SDK, MAVProxy, Ardupilot',
-            details: 'Kuasai seni flying, autonomous missions, dan aerial imaging dengan drone technology yang profesional.',
-          },
-        ];
-        // Add default data to Firestore
-        for (const item of defaultCourses) {
-          const docRef = await addDoc(collection(db, 'courses'), item);
-          data.push({ id: docRef.id, ...item });
-        }
-        setCourses(data);
-      }
+      setCourses(data);
     } catch (error) {
       console.error('Error loading courses:', error);
     }

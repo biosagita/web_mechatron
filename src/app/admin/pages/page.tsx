@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useContent } from '@/context/ContentContext';
 import { CustomPage, PageSection, CourseItem } from '@/context/ContentContext';
-import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Eye, X } from 'lucide-react';
 import { ImageUpload, MultiImageUpload } from '@/components/admin';
+import PageRenderer from '@/components/shared/PageRenderer';
 
 const SECTION_TYPES = [
   { value: 'hero', label: '🎯 Hero Section', description: 'Banner utama dengan judul, subtitle, dan tombol' },
@@ -40,6 +41,7 @@ export default function AdminPages() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [showPreview, setShowPreview] = useState(false);
 
   const toggleSectionExpand = (id: string) => {
     setExpandedSections(prev => {
@@ -887,6 +889,48 @@ export default function AdminPages() {
 
   return (
     <div className="min-h-screen bg-gray-900 p-8">
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/70 transition-opacity"
+            onClick={() => setShowPreview(false)}
+          ></div>
+          
+          {/* Modal Content */}
+          <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative bg-gray-900 rounded-lg max-w-7xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-white">
+                  Preview: {formData.title || 'Untitled Page'}
+                </h2>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="p-2 hover:bg-gray-700 rounded transition"
+                  title="Close preview"
+                  aria-label="Close preview"
+                >
+                  <X className="w-6 h-6 text-gray-300" />
+                </button>
+              </div>
+              
+              {/* Preview Content */}
+              <div className="bg-gray-900">
+                {formData.sections && formData.sections.length > 0 ? (
+                  <PageRenderer sections={formData.sections} />
+                ) : (
+                  <div className="flex items-center justify-center h-96 text-gray-400">
+                    <p className="text-lg">Belum ada sections. Tambahkan section untuk melihat preview.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-white mb-8">Admin - Page Builder</h1>
 
@@ -1020,6 +1064,12 @@ export default function AdminPages() {
                   className="flex-1 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-500"
                 >
                   {loading ? 'Saving...' : editingId && editingId.length > 10 ? 'Update' : 'Create'}
+                </button>
+                <button
+                  onClick={() => setShowPreview(true)}
+                  className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <Eye className="w-4 h-4" /> Preview
                 </button>
                 {editingId && editingId.length > 10 && (
                   <button
